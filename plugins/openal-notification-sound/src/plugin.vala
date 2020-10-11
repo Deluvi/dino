@@ -53,7 +53,13 @@ public class Plugin : RootInterface, Object {
             return false;
         }
 
-        this.ctx = new ALC.Context(device, new ALC.ALCint[] { 0, 0 });
+        var attributes = new ALC.ALCint[] { 0, 0 };
+
+        if (this.device.is_extension_present("ALC_EXT_EFX")) {
+            attributes = new ALC.ALCint[] { this.device.get_enum_value("ALC_MAX_AUXILIARY_SENDS"), 0, 0, 0 };
+        }
+
+        this.ctx = new ALC.Context(device, attributes);
         if (ctx == null || !ctx.make_current()) {
             stderr.printf("[openal-notification]: Could not set a context!\n");
             return false;
